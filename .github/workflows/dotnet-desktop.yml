@@ -1,0 +1,42 @@
+name: BuildAndTest
+
+on:
+  push:
+    tags:        
+      - '*'
+jobs:
+
+  docker:
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4.2.0
+        with:
+          versionSpec: '6.4.x'
+
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v4.2.0
+        with:
+          updateProjectFiles: true
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build with dotnet
+        run: dotnet build --configuration Release --no-restore
+      - name: Publish
+        run: dotnet publish -c Release --output ./Release
+      - name: Zip Folder
+        run: |
+          cd ./Release
+          rm -rf Testversion_TODO.zip
+          zip -r Testversion_TODO.zip TestVersionRepo -x ".git/*" ".github/*"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: testtool
+          path: ./Release/Testversion_TODO.zip
+
+      
