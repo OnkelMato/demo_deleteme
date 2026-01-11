@@ -39,7 +39,7 @@ jobs:
           zip -r Testversion_${{ env.GitVersion_majorMinorPatch }}.zip * -x ".git/*" ".github/*" "appsettings.Development.json"
       - uses: actions/upload-artifact@v4
         with:
-          name: testtool
+          name: Testversion_${{ env.GitVersion_majorMinorPatch }}
           path: ./Release/Testversion_${{ env.GitVersion_majorMinorPatch }}.zip
 
       
