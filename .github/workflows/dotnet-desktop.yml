@@ -41,5 +41,10 @@ jobs:
         with:
           name: Testversion_${{ env.GitVersion_majorMinorPatch }}
           path: ./Release/Testversion_${{ env.GitVersion_majorMinorPatch }}.zip
-
+      - uses: softprops/action-gh-release@v2
+        name: Release
+        if: github.ref_type == 'tag'
+        with:
+          files: ./Release/Testversion_${{ env.GitVersion_majorMinorPatch }}.zip
+          
       
