@@ -28,11 +28,11 @@ jobs:
         with:
           updateProjectFiles: true
       - name: Install dependencies
-        run: dotnet restore .\DemoApp\
+        run: dotnet restore .\DemoApp\WebApplication1\WebApplication1.csproj
       - name: Build with dotnet
-        run: dotnet build --configuration Release --no-restore .\DemoApp\
+        run: dotnet build --configuration Release --no-restore .\DemoApp\WebApplication1\WebApplication1.csproj
       - name: Publish
-        run: dotnet publish -c Release --output ./Release .\DemoApp\
+        run: dotnet publish -c Release --output ./Release .\DemoApp\WebApplication1\WebApplication1.csproj
       - name: Zip Folder
         run: |
           cd ./Release
