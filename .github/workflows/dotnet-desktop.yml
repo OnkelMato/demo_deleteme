@@ -24,11 +24,11 @@ jobs:
         with:
           updateProjectFiles: true
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore .\DemoApp\
       - name: Build with dotnet
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore .\DemoApp\
       - name: Publish
-        run: dotnet publish -c Release --output ./Release
+        run: dotnet publish -c Release --output ./Release .\DemoApp\
       - name: Zip Folder
         run: |
           cd ./Release
