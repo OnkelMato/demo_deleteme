@@ -36,8 +36,7 @@ jobs:
       - name: Zip Folder
         run: |
           cd ./Release
-          rm -rf Testversion_TODO.zip
-          zip -r Testversion_TODO.zip TestVersionRepo -x ".git/*" ".github/*"
+          zip -r Testversion_TODO.zip * -x ".git/*" ".github/*" "appsettings.Development.json"
       - uses: actions/upload-artifact@v4
         with:
           name: testtool
