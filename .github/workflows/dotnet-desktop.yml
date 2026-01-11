@@ -2,8 +2,12 @@ name: BuildAndTest
 
 on:
   push:
+    branches: [ "main" ]
     tags:        
-      - '*'
+      - '*'           # Push events to every tag not containing /
+  pull_request:
+    branches: [ "main" ]
+
 jobs:
 
   docker:
