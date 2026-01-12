@@ -13,6 +13,8 @@ jobs:
   buildAndPublish:
     permissions:
       contents: write
+      actions: read
+      checks: write
     env:
       BuildConfiguration: Release
       WorkingDirectory: ./DemoApp/
@@ -41,13 +43,40 @@ jobs:
 
 
       - name: Run tests with code coverage
-        run: dotnet test ./DemoApp/DemoApp.sln --configuration Release --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+        run: dotnet test ./DemoApp/DemoApp.sln --configuration Release --logger "nunit;LogFileName=test-results.xml" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+
+      - uses: actions/upload-artifact@v4  # upload test results
+        if: ${{ !cancelled() }}           # run this step even if previous step failed
+        with:
+          name: test-results
+          path: jest-junit.xml
 
       - name: Publish code coverage results
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report
           path: '**/coverage.cobertura.xml'
+
+      - name: Code Coverage Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: '**/coverage.cobertura.xml'
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: both
+          thresholds: '60 80'
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md
+
 
 
 
@@ -56,18 +85,18 @@ jobs:
       - name: Zip Folder
         run: |
           cd ./Release
-          zip -r Testversion_${{ steps.version_step.outputs.majorMinorPatch }}.zip * -x ".git/*" ".github/*" "appsettings.Development.json"
+          zip -r Testversion_${{ steps.version_step.outputs.SemVer }}.zip * -x ".git/*" ".github/*" "appsettings.Development.json"
       - uses: actions/upload-artifact@v4
         with:
-          name: Testversion_${{ steps.version_step.outputs.majorMinorPatch }}
-          path: ./Release/Testversion_${{ steps.version_step.outputs.majorMinorPatch }}.zip
+          name: Testversion_${{ steps.version_step.outputs.SemVer }}
+          path: ./Release/Testversion_${{ steps.version_step.outputs.SemVer }}.zip
 
 
       - uses: softprops/action-gh-release@v2
         name: Release
         if: github.ref_type == 'tag'
         with:
-          files: ./Release/Testversion_${{ steps.version_step.outputs.majorMinorPatch }}.zip
+          files: ./Release/Testversion_${{ steps.version_step.outputs.SemVer }}.zip
         env:
           GH_TOKEN: ${{ secrets.REPO_TOKEN }}
 
