@@ -13,6 +13,11 @@ jobs:
   buildAndPublish:
     permissions:
       contents: write
+    env:
+      BuildConfiguration: Release
+      WorkingDirectory: ./DemoApp/
+      SolutionFile: ./DemoApp/DemoApp.sln
+      WebProjectFile: ./DemoApp/WebApplication1/WebApplication1.csproj
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -32,6 +37,20 @@ jobs:
         run: dotnet restore ./DemoApp/WebApplication1/WebApplication1.csproj
       - name: Build with dotnet
         run: dotnet build --configuration Release --no-restore ./DemoApp/WebApplication1/WebApplication1.csproj
+
+
+
+      - name: Run tests with code coverage
+        run: dotnet test $ --configuration Release --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+
+      - name: Publish code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: '**/coverage.cobertura.xml'
+
+
+
       - name: Publish
         run: dotnet publish -c Release --output ./Release ./DemoApp/WebApplication1/WebApplication1.csproj
       - name: Zip Folder

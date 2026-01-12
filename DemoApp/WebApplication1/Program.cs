@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+
 namespace WebApplication1
 {
     public class Program
@@ -29,6 +31,14 @@ namespace WebApplication1
             app.MapRazorPages();
 
             app.Run();
+        }
+    }
+
+    public class Calculator
+    {
+        public int Add(int a, int b)
+        {
+            return a + b;
         }
     }
 }
