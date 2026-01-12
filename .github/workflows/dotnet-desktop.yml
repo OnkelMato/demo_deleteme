@@ -46,10 +46,11 @@ jobs:
         run: dotnet test ./DemoApp/DemoApp.sln --configuration Release --logger "nunit;LogFileName=test-results.xml" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
 
       - uses: actions/upload-artifact@v4  # upload test results
+        name: Publish Test Results
         if: ${{ !cancelled() }}           # run this step even if previous step failed
         with:
           name: test-results
-          path: test-results.xml
+          path: '**/test-results.xml'
 
       - name: Publish code coverage results
         uses: actions/upload-artifact@v4
