@@ -41,7 +41,7 @@ jobs:
 
 
       - name: Run tests with code coverage
-        run: dotnet test $ --configuration Release --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+        run: dotnet test ./DemoApp/DemoApp.sln --configuration Release --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
 
       - name: Publish code coverage results
         uses: actions/upload-artifact@v4
